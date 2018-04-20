@@ -1,19 +1,44 @@
 package com.demo.tomcat.threadtest;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
-private static final String TAG =  MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity
+{
+    private static final String TAG =  MainActivity.class.getSimpleName();
 
-TextView    tvMessage;
-Button      btnChangeText;
+    private static final int UPDATE_TEXT = 1;
 
-boolean     btnStatus;
+    TextView    tvMessage;
+    Button      btnChangeText;
+
+    boolean     btnStatus;
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+                case UPDATE_TEXT:
+                    tvMessage.setText("Nice to meet you !!");
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +52,17 @@ boolean     btnStatus;
 
     public void OnClickChangeText(View view)
     {
+        Log.w(TAG, "OnClickChangeText(), ");
         switch (view.getId())
         {
             case R.id.change_text:
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        tvMessage.setText("Nice to meet you !!");
+                        Log.w(TAG, " Thread, Runnable, run(), ");
+                        Message msg = new Message();
+                        msg.what = UPDATE_TEXT;
+                        handler.sendMessage(msg);
                     }
                 }).start();
                 break;
@@ -47,7 +76,7 @@ boolean     btnStatus;
     //-------------------------- User function -----------------------//
     private void initView()
     {
-        Log.w(TAG, "initView(), ");
+        Log.w(TAG, " initView(), ");
         tvMessage = findViewById(R.id.textMsg);
         btnChangeText = findViewById(R.id.change_text);
 
@@ -55,8 +84,8 @@ boolean     btnStatus;
 
     private void initControl()
     {
-        Log.w(TAG, "initControl(), ");
-
+        Log.w(TAG, " initControl(), ");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
 
