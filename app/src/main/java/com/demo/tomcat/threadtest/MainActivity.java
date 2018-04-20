@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity
     TextView    tvMessage;
     Button      btnChangeText;
 
+    DownloadTask    downloadTask;
     boolean     btnStatus;
 
     @SuppressLint("HandlerLeak")
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
+
+        downloadTask = (DownloadTask) new DownloadTask(this).execute();
     }
 
 
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     {
         Log.w(TAG, " initControl(), ");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //downloadTask = new DownloadTask(this);
     }
 
 
